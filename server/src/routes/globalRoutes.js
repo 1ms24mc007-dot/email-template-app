@@ -1,0 +1,17 @@
+import { Router } from 'express'; import { ok, wrap } from '../utils/http.js'; import * as g from '../services/globalService.js';
+const r = Router();
+r.get('/source', wrap(async (_q, s) => ok(s, await g.getSource())));
+r.post('/source/test', wrap(async (_q, s) => ok(s, await g.testConnection(), 'Connection successful')));
+r.post('/source/sync', wrap(async (_q, s) => ok(s, await g.sync(), 'Synchronization complete')));
+r.get('/users', wrap(async (q, s) => ok(s, await g.listUsers(q.query.search))));
+r.get('/users/:id', wrap(async (q, s) => ok(s, await g.getUser(q.params.id))));
+r.get('/mappings', wrap(async (_q, s) => ok(s, await g.listMappings())));
+r.get('/mappings/preview', wrap(async (q, s) => ok(s, await g.previewMappings(q.query.userId))));
+r.post('/mappings', wrap(async (q, s) => { await g.createMapping(q.body); ok(s, null, 'Mapping added', 201); }));
+r.put('/mappings/:id', wrap(async (q, s) => { await g.updateMapping(q.params.id, q.body); ok(s, null, 'Mapping updated'); }));
+r.delete('/mappings/:id', wrap(async (q, s) => { await g.deleteMapping(q.params.id); ok(s, null, 'Mapping deleted'); }));
+r.get('/placeholders', wrap(async (_q, s) => ok(s, await g.listPlaceholders())));
+r.post('/placeholders', wrap(async (q, s) => ok(s, await g.createManual(q.body), 'Placeholder created', 201)));
+r.put('/placeholders/:id', wrap(async (q, s) => ok(s, await g.updateManual(q.params.id, q.body), 'Placeholder updated')));
+r.delete('/placeholders/:id', wrap(async (q, s) => { await g.deleteManual(q.params.id); ok(s, null, 'Placeholder deleted'); }));
+export default r;

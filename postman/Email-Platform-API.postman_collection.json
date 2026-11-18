@@ -1,0 +1,270 @@
+{
+  "info": {
+    "name": "Email Platform API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000/api"
+    },
+    {
+      "key": "templateId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth status (setupRequired)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/auth/status"
+      }
+    },
+    {
+      "name": "Setup admin (once)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/setup",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"Admin\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"StrongPass123\",\n  \"confirmPassword\": \"StrongPass123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login (cookie saved automatically)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"StrongPass123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Me",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/auth/me"
+      }
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{baseUrl}}/auth/logout"
+      }
+    },
+    {
+      "name": "Forgot password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/forgot-password",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Reset password (token from email link)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/reset-password",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"PASTE_TOKEN\",\n  \"password\": \"NewStrongPass123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Create template",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"templateName\": \"Welcome Email\",\n  \"templateCode\": \"WELCOME_EMAIL\",\n  \"description\": \"Greets new hires\",\n  \"subject\": \"Welcome to {{companyName}}\",\n  \"htmlBody\": \"<h2>Hello {{firstName}},</h2><p>Welcome to {{companyName}}.</p>\",\n  \"plainTextBody\": \"Hello {{firstName}}, welcome to {{companyName}}.\",\n  \"status\": \"published\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const j=pm.response.json();if(j.data)pm.collectionVariables.set(\"templateId\",j.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List templates",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/templates?search=&status="
+      }
+    },
+    {
+      "name": "Get template",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/templates/{{templateId}}"
+      }
+    },
+    {
+      "name": "Update template",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates/{{templateId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"templateName\": \"Welcome Email\",\n  \"templateCode\": \"WELCOME_EMAIL\",\n  \"description\": \"Updated\",\n  \"subject\": \"Welcome to {{companyName}}\",\n  \"htmlBody\": \"<h2>Hello {{firstName}},</h2><p>Welcome to {{companyName}}.</p>\",\n  \"plainTextBody\": \"Hello {{firstName}}, welcome to {{companyName}}.\",\n  \"status\": \"published\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Delete template",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/templates/{{templateId}}"
+      }
+    },
+    {
+      "name": "Dashboard summary",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/dashboard/summary?days=7"
+      }
+    },
+    {
+      "name": "Dashboard activity",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/dashboard/activity?days=30"
+      }
+    },
+    {
+      "name": "Send test email",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/emails/test",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "templateId",
+              "value": "{{templateId}}",
+              "type": "text"
+            },
+            {
+              "key": "testTo",
+              "value": "you@example.com",
+              "type": "text"
+            },
+            {
+              "key": "values",
+              "value": "{\"firstName\":\"Anant\",\"companyName\":\"ABC Technologies\"}",
+              "type": "text"
+            },
+            {
+              "key": "attachments",
+              "type": "file",
+              "src": [],
+              "disabled": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Send email",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/emails/send",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "templateId",
+              "value": "{{templateId}}",
+              "type": "text"
+            },
+            {
+              "key": "to",
+              "value": "a@example.com, b@example.com",
+              "type": "text"
+            },
+            {
+              "key": "cc",
+              "value": "",
+              "type": "text"
+            },
+            {
+              "key": "bcc",
+              "value": "",
+              "type": "text"
+            },
+            {
+              "key": "values",
+              "value": "{\"firstName\":\"Anant\",\"companyName\":\"ABC Technologies\"}",
+              "type": "text"
+            },
+            {
+              "key": "attachments",
+              "type": "file",
+              "src": [],
+              "disabled": true
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
